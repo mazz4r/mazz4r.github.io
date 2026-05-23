@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matheus Machado Mazzer — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0f;
+    --surface: #161618;
+    --surface2: #1e1e21;
+    --border: #2a2a2e;
+    --accent: #c8a96e;
+    --accent2: #7eb8a4;
+    --text: #e8e4dc;
+    --muted: #7a7870;
+    --dim: #4a4845;
+    --white: #f5f2ee;
+    --red: #c46b5a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── CURSOR ── */
+  .cursor {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+  }
+  .cursor-ring {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(200,169,110,0.4);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.3s ease;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    z-index: 100;
+    transition: transform 0.4s cubic-bezier(0.77,0,0.175,1);
+  }
+
+  .sidebar-header {
+    padding: 40px 32px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-role {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .sidebar-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 16px;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    background: var(--accent2);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .status-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 32px 0;
+    overflow-y: auto;
+  }
+
+  .nav-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    padding: 0 32px;
+    margin-bottom: 8px;
+    margin-top: 24px;
+  }
+
+  .nav-section-label:first-child { margin-top: 0; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 32px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .nav-item:hover { color: var(--text); background: var(--surface2); }
+
+  .nav-item.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(200,169,110,0.05);
+  }
+
+  .nav-icon {
+    font-size: 14px;
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .sidebar-footer {
+    padding: 24px 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .contact-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+  }
+
+  .contact-link:hover { color: var(--accent); }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: 260px;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    background: rgba(14,14,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 50;
+  }
+
+  .topbar-breadcrumb {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .topbar-breadcrumb span { color: var(--dim); }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .btn {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.03em;
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--dim); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0e0e0f;
+  }
+  .btn-primary:hover { background: #d4b87a; transform: translateY(-1px); }
+
+  /* ── SECTIONS ── */
+  .section {
+    display: none;
+    animation: fadeIn 0.4s ease forwards;
+  }
+  .section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 80px 56px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    top: 20px; right: -20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 180px;
+    font-weight: 300;
+    color: rgba(200,169,110,0.04);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 6vw, 80px);
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.0;
+    margin-bottom: 8px;
+  }
+
+  .hero-name em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    margin-bottom: 36px;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .hero-divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+    margin-bottom: 48px;
+  }
+
+  /* ── CARDS GRID ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0 56px 56px;
+  }
+
+  .card {
+    background: var(--surface);
+    padding: 28px;
+    transition: background 0.2s ease;
+    cursor: default;
+  }
+
+  .card:hover { background: var(--surface2); }
+
+  .card-icon {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .card-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+  }
+
+  .card-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── SECTION CONTENT ── */
+  .section-content {
+    padding: 56px 56px 80px;
+  }
+
+  .section-header {
+    margin-bottom: 48px;
+  }
+
+  .section-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-tag::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.1;
+  }
+
+  .section-title em { font-style: italic; color: var(--accent); }
+
+  /* ── TIMELINE ── */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 120px 1px 1fr;
+    gap: 0 32px;
+    position: relative;
+    padding-bottom: 40px;
+  }
+
+  .timeline-item:last-child { padding-bottom: 0; }
+
+  .timeline-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    padding-top: 4px;
+    line-height: 1.4;
+  }
+
+  .timeline-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .timeline-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--bg);
+    flex-shrink: 0;
+    margin-top: 4px;
+    transition: all 0.3s ease;
+  }
+
+  .timeline-item:hover .timeline-dot {
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(200,169,110,0.5);
+  }
+
+  .timeline-connector {
+    flex: 1;
+    width: 1px;
+    background: var(--border);
+    margin-top: 8px;
+  }
+
+  .timeline-item:last-child .timeline-connector { display: none; }
+
+  .timeline-body { padding-top: 0; }
+
+  .timeline-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 2px;
+    line-height: 1.2;
+  }
+
+  .timeline-org {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  .timeline-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .timeline-bullets li {
+    font-size: 13px;
+    color: var(--muted);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .timeline-bullets li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--dim);
+  }
+
+  /* ── SKILLS SECTION ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    transition: all 0.3s ease;
+  }
+
+  .skill-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .skill-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .skill-level {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+
+  .skill-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .skill-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 1s cubic-bezier(0.77,0,0.175,1);
+  }
+
+  /* ── HONORS ── */
+  .honors-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .honor-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .honor-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+  }
+
+  .honor-card:hover::before { transform: scaleY(1); }
+  .honor-card:hover { transform: translateX(4px); }
+
+  .honor-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+  }
+
+  .honor-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .honor-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── LANGUAGES ── */
+  .lang-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .lang-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.2s;
+  }
+
+  .lang-card:hover { border-color: var(--accent2); }
+
+  .lang-flag { font-size: 24px; }
+
+  .lang-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .lang-level {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── VOLUNTEER ── */
+  .vol-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .vol-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .vol-card:hover {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 1px rgba(126,184,164,0.2);
+  }
+
+  .vol-badge {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--accent2);
+    border: 1px solid rgba(126,184,164,0.3);
+    padding: 3px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+
+  .vol-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .vol-org {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    letter-spacing: 0.05em;
+  }
+
+  .vol-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .about-text p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+
+  .about-text p strong {
+    color: var(--white);
+    font-weight: 600;
+  }
+
+  .about-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .meta-row {
+    display: flex;
+    background: var(--surface);
+    padding: 14px 20px;
+    align-items: center;
+    gap: 16px;
+    transition: background 0.2s;
+  }
+
+  .meta-row:hover { background: var(--surface2); }
+
+  .meta-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    width: 100px;
+    flex-shrink: 0;
+  }
+
+  .meta-val {
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 48px 0;
+  }
+
+  /* ── MOBILE TOGGLE ── */
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 16px; left: 16px;
+    z-index: 200;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 40px; height: 40px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── PILL TAGS ── */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: all 0.2s;
+  }
+
+  .tag:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ── PROGRESS RING ── */
+  .progress-ring-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  .ring-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ring-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+
+  /* ── SCROLL HINT ── */
+  .scroll-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    margin-top: 40px;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .sidebar {
+      transform: translateX(-100%);
+    }
+    .sidebar.open {
+      transform: translateX(0);
+    }
+    .main { margin-left: 0; }
+    .hero { padding: 80px 24px 40px; }
+    .cards-grid { margin: 0 24px 40px; }
+    .section-content { padding: 40px 24px 60px; }
+    .topbar { padding: 0 24px; }
+    .about-grid { grid-template-columns: 1fr; }
+    .menu-toggle { display: flex; }
+    .timeline-item { grid-template-columns: 80px 1px 1fr; gap: 0 16px; }
+  }
+
+  /* PRINT */
+  @media print {
+    .sidebar, .topbar, .cursor, .cursor-ring, .menu-toggle { display: none !important; }
+    .main { margin-left: 0 !important; }
+    .section { display: block !important; }
+    body { background: white; color: black; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<button class="menu-toggle" id="menuToggle">☰</button>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-name">Matheus M.<br>Mazzer</div>
+    <div class="sidebar-role">Data Analysis Candidate</div>
+    <div class="sidebar-status">
+      <div class="status-dot"></div>
+      <span class="status-text">Disponível — Fall 2025</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Navegação</div>
+    <a class="nav-item active" data-section="overview" href="#">
+      <span class="nav-icon">◈</span> Visão Geral
+    </a>
+    <a class="nav-item" data-section="experience" href="#">
+      <span class="nav-icon">◎</span> Experiências
+    </a>
+    <a class="nav-item" data-section="extracurricular" href="#">
+      <span class="nav-icon">◉</span> Extracurricular
+    </a>
+    <a class="nav-item" data-section="volunteer" href="#">
+      <span class="nav-icon">♡</span> Voluntariado
+    </a>
+
+    <div class="nav-section-label">Perfil</div>
+    <a class="nav-item" data-section="honors" href="#">
+      <span class="nav-icon">✦</span> Honras & Prêmios
+    </a>
+    <a class="nav-item" data-section="skills" href="#">
+      <span class="nav-icon">◇</span> Habilidades
+    </a>
+    <a class="nav-item" data-section="about" href="#">
+      <span class="nav-icon">○</span> Sobre
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="contact-links">
+      <a class="contact-link" href="mailto:mathamz2716@gmail.com">
+        ✉ mathamz2716@gmail.com
+      </a>
+      <a class="contact-link" href="tel:+5516982186363">
+        ✆ +55 (16) 98218-6363
+      </a>
+      <a class="contact-link" href="#">
+        ⌖ Franca, Brasil
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-breadcrumb">
+      Matheus Mazzer <span>/</span>
+      <span id="breadcrumb-current">Visão Geral</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost" onclick="window.print()">↓ Baixar PDF</button>
+      <a class="btn btn-primary" href="mailto:mathamz2716@gmail.com">Contato</a>
+    </div>
+  </div>
+
+  <!-- ───────── OVERVIEW ───────── -->
+  <section class="section active" id="section-overview">
+    <div class="hero">
+      <div class="hero-bg-text">MMM</div>
+      <div class="hero-tag">Currículo Interativo — 2025</div>
+      <h1 class="hero-name">
+        Matheus<br><em>Machado</em><br>Mazzer
+      </h1>
+      <p class="hero-subtitle">Candidato a Análise de Dados · Franca, Brasil</p>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">860</span>
+          <span class="stat-label">ENEM / 1000</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">8.02</span>
+          <span class="stat-label">GPA / 10.0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">4</span>
+          <span class="stat-label">Idiomas</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">10+</span>
+          <span class="stat-label">Atividades</span>
+        </div>
+      </div>
+
+      <div class="hero-divider"></div>
+
+      <div class="tags">
+        <span class="tag">Análise de Dados</span>
+        <span class="tag">Front-End</span>
+        <span class="tag">Astronomia</span>
+        <span class="tag">Piano Clássico</span>
+        <span class="tag">Natação</span>
+        <span class="tag">Boxe</span>
+        <span class="tag">Xadrez</span>
+        <span class="tag">Inglês Fluente</span>
+      </div>
+
+      <div class="scroll-hint">↓ Explore as seções</div>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">🎓</div>
+        <div class="card-title">Colégio Alto Padrão</div>
+        <div class="card-sub">Ensino Médio · Nov 2025</div>
+        <div class="card-text">Diploma do Ensino Médio Brasileiro com GPA 8.02 e DET score 140.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏅</div>
+        <div class="card-title">Top 14.7% ENEM</div>
+        <div class="card-sub">860 / 1000 · 2024</div>
+        <div class="card-text">Entre os maiores pontuadores no maior exame padronizado do Brasil com 3M de participantes.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <div class="card-title">Dev & Dados</div>
+        <div class="card-sub">HTML/CSS · Análise</div>
+        <div class="card-text">Construiu sites pessoais e familiares, aumentando o alcance de serviços em 25%.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎹</div>
+        <div class="card-title">Pianista Concertista</div>
+        <div class="card-sub">Desde 2016</div>
+        <div class="card-text">Performances em Teatro Municipal (200+ pessoas) e Escola Copérnico. Clássicos brasileiros.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🥊</div>
+        <div class="card-title">Atleta Multiesportivo</div>
+        <div class="card-sub">Natação · Boxe · Atletismo</div>
+        <div class="card-text">Representante de equipe em competições regionais. Convite para treino profissional em boxe.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌱</div>
+        <div class="card-title">Voluntariado Ativo</div>
+        <div class="card-sub">300+ adultos ensinados</div>
+        <div class="card-text">Professor de inglês para adultos e mentor em acampamentos juvenis católicos regionais.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── EXPERIENCE ───────── -->
+  <section class="section" id="section-experience">
+    <div class="section-content">
+      <div class="section-header">
+        <div class="section-tag">Trajetória</div>
+        <h2 class="section-title">Experi<em>ências</em></h2>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-date">2023</div>
+          <div class="timeline-line">
+            <div class="timeline-dot"></div>
+            <div class="timeline-connector"></div>
+          </div>
+          <div class="timeline-body">
+            <div class="timeline-title">Front-end Developer & Project Builder</div>
+            <div class="timeline-org">Danki Code — Plataforma de aprendizado tech</div>
+            <ul class="timeline-bullets">
+              <li>Construiu sites pessoais e familiares em HTML/CSS, aumentando o alcance de serviços em 25%</li>
+              <li>Desenvolveu habilidades de empreendedorismo, análise de mercado e lógica computacional</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-date">2023 / 2024</div>
+          <div class="timeline-line">
+            <div class="timeline-dot"></div>
+            <div class="timeline-connector"></div>
+          </div>
+          <div class="timeline-body">
+            <div class="timeline-title">Atleta de Atletismo</div>
+            <div class="timeline-org">Franca Alto Padrão — Esportes Internos</div>
+            <ul class="timeline-bullets">
+              <li>Venceu as baterias de 50M e 300M, conquistando 1º lugar entre 5 turmas</li>
+              <li>Desenvolveu disciplina, autoconfiança e técnica por meio de prática semanal</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-date">2023 / 2024</div>
+          <div class="timeline-line">
+            <div class="timeline-dot"></div>
+            <div class="timeline-connector"></div>
+          </div>
+          <div class="timeline-body">
+            <div class="timeline-title">Atleta de Xadrez</div>
+            <div class="timeline-org">Franca Alto Padrão — Esportes Internos</div>
+            <ul class="timeline-bullets">
+              <li>Jogou contra os três melhores jogadores e venceu, garantindo 1º lugar entre 5 turmas</li>
+              <li>Treino diário com avô ELO 1800, aprendendo nuances estratégicas do jogo</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-date">2017 – 2022</div>
+          <div class="timeline-line">
+            <div class="timeline-dot"></div>
+            <div class="timeline-connector"></div>
+          </div>
+          <div class="timeline-body">
+            <div class="timeline-title">Assistente de Propagação Agrícola</div>
+            <div class="timeline-org">Sítio Santa Rosa — Família, café e borracha</div>
+            <ul class="timeline-bullets">
+              <li>Seleção de sementes de café, plantio, enxertia, poda e extração de borracha</li>
+              <li>Manteve excelência produtiva da fazenda, gerando R$~6.000/ano de lucro</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── EXTRACURRICULAR ───────── -->
+  <section class="section" id="section-extracurricular">
+    <div class="section-content">
+      <div class="section-header">
+        <div class="section-tag">Além da sala</div>
+        <h2 class="section-title">Extra<em>curricular</em></h2>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-date">2024 / 2025</div>
+          <div class="timeline-line">
+            <div class="timeline-dot"></div>
+            <div class="timeline-connector"></div>
+          </div>
+          <div class="timeline-body">
+            <div class="timeline-title">Atleta Regional de Natação & Representante</div>
+            <div class="timeline-org">Fundação Esporte, Arte e Cultura</div>
+            <ul class="timeline-bullets">
+              <li>Integrou equipe base municipal com treinos diários. Venceu nado costas U-2008 em torneios regionais e representou a equipe em eventos com 200+ atletas</li>
+              <li>Dominou disciplina esportiva, fortaleza mental e técnica de costas e peito</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-date">2024</div>
+          <div class="timeline-line">
+            <div class="timeline-dot"></div>
+            <div class="timeline-connector"></div>
+          </div>
+          <div class="timeline-body">
+            <div class="timeline-title">Atleta Peso Leve de Boxe & Organizador</div>
+            <div class="timeline-org">Phoenix Academia</div>
+            <ul class="timeline-bullets">
+              <li>Participou de iniciativa de 7 meses para desenvolver autocontrole juvenil. Serviu como elo, organizando reuniões e sparrings. Convidado para treino profissional.</li>
+              <li>Aprendeu defesa pessoal prática e aprofundou habilidades organizacionais</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-date">2016 →</div>
+          <div class="timeline-line">
+            <div class="timeline-dot"></div>
+            <div class="timeline-connector"></div>
+          </div>
+          <div class="timeline-body">
+            <div class="timeline-title">Pianista Concertista & Intérprete de Clássicos Brasileiros</div>
+            <div class="timeline-org">Vivarte & Instituto Lúcia Garcette</div>
+            <ul class="timeline-bullets">
+              <li>Estudou piano desde os 8 anos com foco em performance solo e em grupo. Apresentou-se no Teatro Municipal (200+ pessoas) duas vezes e na Escola Copérnico (70+)</li>
+              <li>Descobriu afinidade pelas artes performáticas e clássicos da música brasileira</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-date">Contínuo</div>
+          <div class="timeline-line">
+            <div class="timeline-dot"></div>
+            <div class="timeline-connector"></div>
+          </div>
+          <div class="timeline-body">
+            <div class="timeline-title">Coroinha & Assistente Litúrgico</div>
+            <div class="timeline-org">Igreja Santa Luzia</div>
+            <ul class="timeline-bullets">
+              <li>Atuou como coroinha em missas e eventos, apoiando rituais litúrgicos para 150+ fiéis</li>
+              <li>Fortaleceu senso de serviço comunitário e fé</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-tag" style="margin-bottom: 20px">Organizações</div>
+      <div class="vol-grid">
+        <div class="vol-card">
+          <div class="vol-badge">Orador</div>
+          <div class="vol-title">Orador de Formatura</div>
+          <div class="vol-org">Wizard Language School · 2023</div>
+          <div class="vol-text">Selecionado como orador na formatura do curso de inglês.</div>
+        </div>
+        <div class="vol-card">
+          <div class="vol-badge">Redator</div>
+          <div class="vol-title">Escritor de Discurso</div>
+          <div class="vol-org">Colégio Alto Padrão · 2022</div>
+          <div class="vol-text">Redigiu o discurso de formatura do 9º ano.</div>
+        </div>
+        <div class="vol-card">
+          <div class="vol-badge">Angariação</div>
+          <div class="vol-title">Arrecadação de Formatura</div>
+          <div class="vol-org">Colégio Alto Padrão · 2025</div>
+          <div class="vol-text">Participou da organização e angariação de recursos para a formatura.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── VOLUNTEER ───────── -->
+  <section class="section" id="section-volunteer">
+    <div class="section-content">
+      <div class="section-header">
+        <div class="section-tag">Impacto social</div>
+        <h2 class="section-title">Volun<em>tariado</em></h2>
+      </div>
+      <div class="vol-grid">
+        <div class="vol-card">
+          <div class="vol-badge">Ensino · 2025</div>
+          <div class="vol-title">Professor de Inglês</div>
+          <div class="vol-org">GROW Ambassadors — Ensino Multilíngue</div>
+          <div class="vol-text">Voluntariou-se para ensinar mais de 300 adultos em aulas básicas de Inglês Empresarial durante 6 meses, contribuindo com impacto direto na empregabilidade dos participantes.</div>
+        </div>
+        <div class="vol-card">
+          <div class="vol-badge">Mentoria · 2022</div>
+          <div class="vol-title">Mentor Juvenil & Coordenador</div>
+          <div class="vol-org">Hacoré — Acampamento Católico Regional</div>
+          <div class="vol-text">Organizou atividades cristãs, promoveu integração grupal e coordenou logística e dinâmicas espirituais. Engajou ativamente 50+ colegas semanalmente.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── HONORS ───────── -->
+  <section class="section" id="section-honors">
+    <div class="section-content">
+      <div class="section-header">
+        <div class="section-tag">Reconhecimentos</div>
+        <h2 class="section-title">Honras &amp; <em>Prêmios</em></h2>
+      </div>
+      <div class="honors-list">
+        <div class="honor-card">
+          <div class="honor-year">2024 · Nacional</div>
+          <div class="honor-title">Top 14.7% ENEM</div>
+          <div class="honor-desc">860/1000 entre 3 milhões de participantes no maior exame padronizado do Brasil.</div>
+        </div>
+        <div class="honor-card">
+          <div class="honor-year">2024 · Nacional</div>
+          <div class="honor-title">Medalha de Prata OBA</div>
+          <div class="honor-desc">Olimpíada Brasileira de Astronomia — nível nacional (5% dos premiados). Qualificado para etapa internacional.</div>
+        </div>
+        <div class="honor-card">
+          <div class="honor-year">2024 · Nacional</div>
+          <div class="honor-title">Top 127º — Simulado ENEM</div>
+          <div class="honor-desc">Ciências Humanas e Sociais — entre 3.600+ participantes em todo o Brasil.</div>
+        </div>
+        <div class="honor-card">
+          <div class="honor-year">2025 · Acadêmico</div>
+          <div class="honor-title">GPA 8.02 / 10.0</div>
+          <div class="honor-desc">Desempenho acadêmico consistente ao longo do Ensino Médio no Colégio Alto Padrão.</div>
+        </div>
+        <div class="honor-card">
+          <div class="honor-year">2025 · Idiomas</div>
+          <div class="honor-title">DET Score 140</div>
+          <div class="honor-desc">Duolingo English Test com pontuação 140, atestando proficiência avançada em inglês.</div>
+        </div>
+        <div class="honor-card">
+          <div class="honor-year">2024 · Regional</div>
+          <div class="honor-title">Campeão U-2008 Costas</div>
+          <div class="honor-desc">Vencedor da prova de nado costas sub-2008 em torneios regionais de natação.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── SKILLS ───────── -->
+  <section class="section" id="section-skills">
+    <div class="section-content">
+      <div class="section-header">
+        <div class="section-tag">Competências</div>
+        <h2 class="section-title">Habili<em>dades</em></h2>
+      </div>
+
+      <div class="section-tag" style="margin-bottom: 20px;">Idiomas</div>
+      <div class="lang-grid">
+        <div class="lang-card">
+          <div class="lang-flag">🇧🇷</div>
+          <div>
+            <div class="lang-name">Português</div>
+            <div class="lang-level">Nativo</div>
+          </div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-flag">🇺🇸</div>
+          <div>
+            <div class="lang-name">Inglês</div>
+            <div class="lang-level">Fluente · DET 140</div>
+          </div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-flag">🇪🇸</div>
+          <div>
+            <div class="lang-name">Espanhol</div>
+            <div class="lang-level">Intermediário</div>
+          </div>
+        </div>
+        <div class="lang-card">
+          <div class="lang-flag">🇯🇵</div>
+          <div>
+            <div class="lang-name">Japonês</div>
+            <div class="lang-level">Básico–Intermediário</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="section-tag" style="margin-bottom: 20px;">Habilidades Técnicas & Pessoais</div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-name">Front-End (HTML/CSS)</div>
+          <div class="skill-level">Intermediário</div>
+          <div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name">Piano / Teclado</div>
+          <div class="skill-level">Avançado</div>
+          <div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name">Ensino & Didática</div>
+          <div class="skill-level">Avançado</div>
+          <div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name">Liderança</div>
+          <div class="skill-level">Avançado</div>
+          <div class="skill-bar"><div class="skill-fill" style="width:82%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name">Análise de Dados</div>
+          <div class="skill-level">Em desenvolvimento</div>
+          <div class="skill-bar"><div class="skill-fill" style="width:50%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name">Xadrez Estratégico</div>
+          <div class="skill-level">Competitivo</div>
+          <div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name">Cuidado Ambiental</div>
+          <div class="skill-level">Consciente</div>
+          <div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name">Gestão Organizacional</div>
+          <div class="skill-level">Intermediário</div>
+          <div class="skill-bar"><div class="skill-fill" style="width:72%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── ABOUT ───────── -->
+  <section class="section" id="section-about">
+    <div class="section-content">
+      <div class="section-header">
+        <div class="section-tag">Quem sou</div>
+        <h2 class="section-title">So<em>bre</em></h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>Sou Matheus, estudante brasileiro com <strong>paixão por dados, música e conexão humana</strong>. Cresci entre a fazenda da família, o palco do Teatro Municipal e as competições de natação — experiências que moldaram minha visão de mundo.</p>
+          <p>Meu interesse em <strong>Análise de Dados</strong> nasceu da curiosidade em entender padrões: no xadrez, nas métricas agrícolas, na lógica computacional. Acredito que dados bem interpretados mudam histórias.</p>
+          <p>Fora dos estudos, sou músico, atleta e voluntário. A diversidade de experiências me tornou um <strong>comunicador empático e líder resiliente</strong>.</p>
+        </div>
+        <div>
+          <div class="about-meta">
+            <div class="meta-row">
+              <span class="meta-key">Nome</span>
+              <span class="meta-val">Matheus Machado Mazzer</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">Localização</span>
+              <span class="meta-val">Franca, São Paulo, Brasil</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">Educação</span>
+              <span class="meta-val">Colégio Alto Padrão · Nov 2025</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">Objetivo</span>
+              <span class="meta-val">Graduação Fall 2025 — Dados</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">Email</span>
+              <span class="meta-val">mathamz2716@gmail.com</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">Telefone</span>
+              <span class="meta-val">+55 (16) 98218-6363</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">Idiomas</span>
+              <span class="meta-val">PT · EN · ES · JA</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">Interesses</span>
+              <span class="meta-val">Piano · Natação · Astronomia · Dados</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // ── CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    cursor.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`;
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.transform = `translate(${ringX - 16}px, ${ringY - 16}px)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .card, .nav-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform += ' scale(1.6)';
+      ring.style.width = '48px';
+      ring.style.height = '48px';
+      ring.style.borderColor = 'rgba(200,169,110,0.6)';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '32px';
+      ring.style.height = '32px';
+      ring.style.borderColor = 'rgba(200,169,110,0.4)';
+    });
+  });
+
+  // ── NAVIGATION
+  const navItems = document.querySelectorAll('.nav-item');
+  const sections = document.querySelectorAll('.section');
+  const breadcrumb = document.getElementById('breadcrumb-current');
+
+  const labels = {
+    overview: 'Visão Geral',
+    experience: 'Experiências',
+    extracurricular: 'Extracurricular',
+    volunteer: 'Voluntariado',
+    honors: 'Honras & Prêmios',
+    skills: 'Habilidades',
+    about: 'Sobre'
+  };
+
+  function navigate(target) {
+    navItems.forEach(i => i.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    const activeNav = document.querySelector(`[data-section="${target}"]`);
+    const activeSection = document.getElementById(`section-${target}`);
+    if (activeNav) activeNav.classList.add('active');
+    if (activeSection) activeSection.classList.add('active');
+    breadcrumb.textContent = labels[target] || target;
+
+    // Animate skill bars
+    if (target === 'skills') {
+      setTimeout(() => {
+        document.querySelectorAll('.skill-fill').forEach(bar => {
+          const w = bar.style.width;
+          bar.style.width = '0%';
+          setTimeout(() => { bar.style.width = w; }, 50);
+        });
+      }, 100);
+    }
+
+    // Close mobile sidebar
+    document.getElementById('sidebar').classList.remove('open');
+  }
+
+  navItems.forEach(item => {
+    item.addEventListener('click', e => {
+      e.preventDefault();
+      navigate(item.dataset.section);
+    });
+  });
+
+  // ── MOBILE MENU
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+  });
+
+  // ── INITIAL skill bar animation
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.skill-fill').forEach(bar => {
+      const w = bar.style.width;
+      bar.style.width = '0%';
+      setTimeout(() => { bar.style.width = w; }, 300);
+    });
+  });
+</script>
+</body>
+</html>
